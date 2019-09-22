@@ -1,0 +1,44 @@
+#flex-container {
+  display: flex;
+  align-items: stretch;
+  background-color: white;
+}
+
+#flex-container > div {
+  background-color: #f2f2f2;
+  color: black;
+  width: 100px;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 20px;
+}
+
+#border-css {
+  margin: 10px 10px 10px 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+  height: inherit;
+}
+
+#newChat_user{
+  width: 200px;
+  height: 20px;
+  padding: 12px 20px;
+  margin: 10px 10px 10px 10px;
+  box-sizing: border-box;
+  border: 2px doted #1f1f14;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+}
+
+#joinAlias_room_alias{
+  width: 200px;
+  height: 20px;
+  padding: 12px 20px;
+  margin: 10px 10px 10px 10px;
+  box-sizing: border-box;
+  border: 2px doted #1f1f14;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+}

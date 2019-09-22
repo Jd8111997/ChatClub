@@ -1,0 +1,123 @@
+<div ng-controller="HomeController" data-ng-init="onInit()">
+
+
+    <script type="text/ng-template" id="createRoomTemplate.html">
+        <div class="modal-header">
+            Create New Room
+        </div>
+        <div class="modal-body">
+            <div>
+                <label><input type="checkbox" ng-model="newRoom.isPublic"> Public Room</label>
+            </div>
+            <div>
+                #<input size="32" ng-model="newRoom.alias" placeholder="Room Alias e.g. 'matrix' (optional)"/>:{{ config.user_domain }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="create()" type="button" class="btn btn-success">
+                Create
+            </button>
+        </div>
+    </script>
+
+    <div id="wrapper">
+
+      <div id="flex-container">
+        <div style="flex-grow: 1;margin-top:10px;margin-right:0px;" >
+          <div id="genericHeading" style="margin-top:10px;">
+              <a href ng-click="goToPage('/')"><img src="img/chatclub.png" width="200" height="70" alt="[matrix]"/></a>
+          </div>
+
+          <div style="margin-top: 10px;border-top:1px #cccccc solid;border-bottom:1px #cccccc solid;">
+              <div class="profile-avatar">
+                  <img  ng-src="{{ (null !== profile.avatarUrl) ? httpUri(profile.avatarUrl, 320, 320) : 'img/default-profile.png' }}"/>
+              </div>
+              <div id="user-ids">
+                  <div id="user-dob">{{profile.dob}}</div>
+                  <div>{{config.user_id}}</div>
+                  <div id="user-displayname"><b>{{ profile.displayName }}</b></div>
+              </div>
+          </div>
+
+          <div class="home_controls" >
+              <form>
+                    <div class="dropdown" style="width:100px;margin-left:70px;">
+                      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><div style="width:200px;height:20px;"><b>Start chat:</b>
+                      <span class="caret"></span></div></button>
+                      <ul class="dropdown-menu" style="background-color:#e6ecff;">
+                        <li><input id="newChat_user" ng-model="newChat.user" ng-enter="messageUser()" /></li>
+                        <li><button class="btn btn-pill btn-primary" style="width:110px;margin-left:70px;" ng-disabled="!newChat.user" ng-click="messageUser()" style="vertical-align:middle"><span>Start</span></button></li>
+                      </ul>
+                    </div>
+              </form>
+          </div>
+
+          <div class="home_controls" >
+              <form>
+                    <div class="dropdown" style="width:100px;margin-left:70px;">
+                      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><div style="width:200px;height:20px;"><b>Join room:</b>
+                      <span class="caret"></span></div></button>
+                      <ul class="dropdown-menu" style="background-color:#e6ecff;">
+                        <li><input style="margin-left:10px" size="30" id="joinAlias_room_alias" ng-model="joinAlias.room_alias" ng-enter="joinAlias(joinAlias.room_alias)" /></li>
+                        <li><button class="btn btn-pill btn-primary" style="width:110px;margin-left:70px;" ng-disabled="!joinAlias.room_alias" ng-click="joinAlias(joinAlias.room_alias)" style="vertical-align:middle"><span>Join</span></button></li>
+                      </ul>
+                    </div>
+              </form>
+          </div>
+
+          <div class="home_controls">
+              <p>
+                  <button class="btn btn-pill btn-primary"  ng-click="showCreateRoomDialog()"><div style="width:200px;height:20px;"><b>Create_Room</b></div></button>
+              </p>
+          </div>
+          <div class="feedback">{{ feedback }}</div>
+
+        </div><!--Prifile-column ended-->
+
+        <div style="flex-grow: 3;background-color:#FFFFFF;margin-left:5px;margin-top:0px;">
+            <div>
+                <div style="color: #001a66;background-color:#f2f2f2;">
+                  <hr>
+                  <h2><b>Recent conversations</b></h2>
+                  <hr>
+                </div>
+                <div ng-include="'app/recents/recents.html'"></div>
+            </div>
+
+            <div>
+                <div style="color: #001a66;background-color:#f2f2f2;">
+                  <hr>
+                  <h2><b>Public rooms</b></h2>
+                  <hr>
+                </div>
+                <div class="spinner publicRoomSpinner" us-spinner ng-show="public_rooms === undefined"> </div>
+                <table class="publicTable">
+                    <tbody ng-repeat="room in public_rooms | orderBy:('num_joined_members'):true"
+                           class="publicRoomEntry"
+                           ng-class="room.is_favourite ? 'roomHighlight' : ''">
+                        <tr>
+                            <td class="publicRoomEntry">
+                                <a href="#/room/{{ room.room_alias ? room.room_alias : room.room_id }}"  >
+                                    {{ room.room_display_name }}
+                                </a>
+                            </td>
+                            <td>
+                                <div class="publicRoomJoinedUsers"
+                                     ng-show="room.num_joined_members">
+                                    {{ room.num_joined_members }} {{ room.num_joined_members == 1 ? 'user' : 'users' }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="publicRoomTopic">
+                                {{ room.topic }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+            </div><!--border css ended-->
+        </div><!--Roomcolumn ended-->
+      </div>
+    </div>
+</div>

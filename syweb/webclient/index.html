@@ -1,0 +1,200 @@
+<!doctype html>
+<html xmlns:ng="http://angularjs.org" ng-app="matrixWebClient" ng-controller="MatrixWebClientController">
+<head>
+    <title>[matrix]</title>
+    <link rel="stylesheet" href="app/button1.css">
+    <link rel="stylesheet" href="app/navbar.css" />
+    <link rel="stylesheet" href="app/roomnavbar.css" />
+    <link rel="stylesheet" href="app/tempfile.css" />
+    <link rel="stylesheet" href="app/setting-css.css" />
+    <link rel="stylesheet" href="app/app.css">
+    <link rel="stylesheet" href="app/mobile.css">
+    <link rel="stylesheet" href="app/bootstrap.css">
+    <link rel="stylesheet" href="lib/angular-dialog-service-5.2.6/dialogs.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <link rel="icon" href="favicon.ico">
+
+    <meta name="viewport" content="width=device-width">
+
+    <script type="text/javascript" src="lib/jquery-2.1.3.min.js"></script>
+    <link rel="stylesheet" href="app/emojionearea.min.css">
+    <link href="app/emojionearea.css" rel="stylesheet">
+    <script src="app/emojionearea.js"></script>
+    <script src="app/emojionearea.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-route.min.js"></script>
+    <script src="lib/angular-sanitize.min.js"></script>
+<!--
+    <script src="lib/jquery.peity.min.js"></script>
+    <script src="lib/angular-peity.js"></script>
+-->
+    <script src="lib/angular-spinner.min.js"></script>
+    <script src="lib/angular-file-upload.min.js"></script>
+    <script src="lib/spin.min.js"></script>
+    <script src="lib/matrix.js"></script>
+    <script type="text/javascript" src="lib/ui-bootstrap-tpls-0.11.2.js"></script>
+    <script type="text/javascript" src="lib/ng-infinite-scroll-matrix.js"></script>
+    <script type="text/javascript" src="lib/autofill-event.js"></script>
+    <script type="text/javascript" src="lib/elastic.js"></script>
+    <script type="text/javascript" src="lib/marked.min.js"></script>
+    <script src="lib/angular-dialog-service-5.2.6/dialogs.min.js"></script>
+    <script src="app/app.js"></script>
+    <script src="config.js"></script>
+    <script src="app/app-controller.js"></script>
+    <script src="app/app-directive.js"></script>
+    <script src="app/app-filter.js"></script>
+    <script src="app/home/home-controller.js"></script>
+    <script src="app/login/login-controller.js"></script>
+    <script src="app/login/register-controller.js"></script>
+    <script src="app/login/reset-password-controller.js"></script>
+    <script src="app/recents/recents-controller.js"></script>
+    <script src="app/recents/recents-filter.js"></script>
+    <script src="app/room/room-controller.js"></script>
+    <script src="app/room/room-directive.js"></script>
+    <script src="app/settings/settings-controller.js"></script>
+    <script src="app/payment/payment-controller.js"></script>
+    <script src="app/payment/payment-service.js"></script>
+    <script src="app/user/user-controller.js"></script>
+    <script src="app/components/matrix/matrix-service.js"></script>
+    <script src="app/components/matrix/matrix-filter.js"></script>
+    <script src="app/components/matrix/webrtc-service.js"></script>
+    <script src="app/components/matrix/matrix-call.js"></script>
+    <script src="app/components/matrix/matrix-phone-service.js"></script>
+    <script src="app/components/matrix/event-stream-service.js"></script>
+    <script src="app/components/matrix/event-handler-service.js"></script>
+    <script src="app/components/matrix/event-reaper-service.js"></script>
+    <script src="app/components/matrix/notification-service.js"></script>
+    <script src="app/components/matrix/recents-service.js"></script>
+    <script src="app/components/matrix/commands-service.js"></script>
+    <script src="app/components/matrix/model-service.js"></script>
+    <script src="app/components/matrix/presence-service.js"></script>
+    <script src="app/components/matrix/typing-service.js"></script>
+    <script src="app/components/matrix/version-service.js"></script>
+    <script src="app/components/dialogs/dialog-service.js"></script>
+    <script src="app/components/fileInput/file-input-directive.js"></script>
+    <script src="app/components/fileUpload/file-upload-service.js"></script>
+    <script src="app/components/utilities/utilities-service.js"></script>
+    <script>
+        var regex=new RegExp('(', 'g');
+    </script>
+</head>
+
+<body>
+      <audio id="incomingMessage">
+          <source src="media/message.ogg" type="audio/ogg" />
+          <source src="media/message.mp3" type="audio/mpeg" />
+      </audio>
+
+      <div id="videoBackground" ng-class="videoMode">
+          <div id="videoContainer" ng-class="videoMode">
+              <div id="videoContainerPadding"></div>
+              <div ng-class="[videoMode, currentCall.state]" ng-show="currentCall && currentCall.type == 'video' && (currentCall.state == 'connected' || currentCall.state == 'connecting' || currentCall.state == 'invite_sent' || currentCall.state == 'ended')"><video id="localVideo"></video></div>
+              <div ng-class="[videoMode, currentCall.state]" ng-show="currentCall && currentCall.type == 'video' && (currentCall.state == 'connected' || (currentCall.state == 'ended' && currentCall.didConnect))"><video id="remoteVideo"></video></div>
+          </div>
+      </div>
+
+      <div ng-class="isBadConnection ? 'header badConnection' : 'header goodConnection'">
+          <div id="headerBadConnection" ng-show="isBadConnection">
+              Connection Lost
+          </div>
+          <!-- Do not show buttons on the login page -->
+          <div id="headerContent" ng-hide="'/login' == location || '/register' == location || '/reset-password' == location">
+
+              <nav class="navbar navbar-custom navbar-fixed-top ">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" href ng-click='goToPage("/")'><b>[CHAT CLUB]</b></a>
+                  </div>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a href ng-click="logout()" style="font-size:20px"><span class="glyphicon glyphicon-log-out"></span> LOG OUT</a></li>
+                  </ul>
+                  <ul class="nav navbar-nav">
+                    <li class="nav-item"><a  href class="nav-link" id="headerUserId" ng-click='goToUserPage(user_id)' style="font-size:20px" ><span class="glyphicon glyphicon-user"></span> {{ user_id }}</a></li>
+                    <li class="nav-item"><a href class="nav-link" ng-click='goToPage("/")' style="font-size:20px" ><span class="glyphicon glyphicon-home"></span> HOME</a></li>
+                    <li class="nav-item"><a href class="nav-link" ng-click='goToPage("settings")' style="font-size:20px"><span class="glyphicon glyphicon-cog"></span> SETTINGS</a></li>
+                  </ul>
+                  <div id="callBar" ng-show="currentCall">
+                      <img id="callPeerImage" ng-src="{{httpUri(currentCall.peerMember.event.content.avatar_url) || currentCall.peerMember.aevent.identicon()}}" />
+                      <img class="callIcon" src="img/green_phone.png" ng-show="!!currentCall" ng-class="currentCall.state" />
+                      <div id="callPeerNameAndState">
+                          <span id="callPeerName">{{ currentCall.peerMember.name | mUserDisplayName: currentCall.room_id }}</span>
+                          <br />
+                          <span id="callState">
+                              <span ng-show="currentCall.state == 'invite_sent'">Calling...</span>
+                              <span ng-show="currentCall.state == 'ringing' && currentCall && currentCall.type == 'video'">Incoming Video Call</span>
+                              <span ng-show="currentCall.state == 'ringing' && currentCall && currentCall.type == 'voice'">Incoming Voice Call</span>
+                              <span ng-show="currentCall.state == 'connecting'">Call Connecting...</span>
+                              <span ng-show="currentCall.state == 'connected'">Call Connected</span>
+                              <span ng-show="currentCall.state == 'ended' && currentCall.hangupReason == 'ice_failed'">Media Connection Failed{{ haveTurn ? "" : " (VoIP relaying unsupported by Home Server)" }}</span>
+                              <span ng-show="currentCall.state == 'ended' && !currentCall.hangupReason && !currentCall.didConnect && currentCall.direction == 'outbound' && currentCall.hangupParty == 'remote'">Call Rejected</span>
+                              <span ng-show="currentCall.state == 'ended' && !currentCall.hangupReason && !currentCall.didConnect && currentCall.direction == 'outbound' && currentCall.hangupParty == 'local'">Call Canceled</span>
+                              <span ng-show="currentCall.state == 'ended' && currentCall.hangupReason == 'invite_timeout' && !currentCall.didConnect && currentCall.direction == 'outbound' && currentCall.hangupParty == 'local'">User Not Responding</span>
+                              <span ng-show="currentCall.state == 'ended' && currentCall.hangupReason == 'answered_elsewhere' && currentCall.direction == 'inbound' && currentCall.hangupParty == 'remote'">Call answered elsewhere</span>
+                              <span ng-show="currentCall.state == 'ended' && !currentCall.hangupReason && currentCall.didConnect && currentCall.direction == 'outbound'">Call Ended</span>
+                              <span ng-show="currentCall.state == 'ended' && !currentCall.hangupReason && !currentCall.didConnect && currentCall.direction == 'inbound'">Call Canceled</span>
+                              <span ng-show="currentCall.state == 'ended' && !currentCall.hangupReason && currentCall.didConnect && currentCall.direction == 'inbound'">Call Ended</span>
+                              <span ng-show="currentCall.state == 'wait_local_media'">Waiting for media permission...</span>
+                          </span>
+                      </div>
+                      <span ng-show="currentCall.state == 'ringing'">
+                          <button ng-click="answerCall()" ng-disabled="!isWebRTCSupported()" title="{{isWebRTCSupported() ? '' : 'Your browser does not support VoIP' }}">Answer {{ currentCall.type }} call</button>
+                          <button ng-click="hangupCall()">Reject</button>
+                      </span>
+                      <button ng-click="hangupCall()" ng-show="currentCall && currentCall.state != 'ringing' && currentCall.state != 'ended' && currentCall.state != 'fledgling'">Hang up</button>
+                      <audio id="ringAudio" loop>
+                          <source src="media/ring.ogg" type="audio/ogg" />
+                          <source src="media/ring.mp3" type="audio/mpeg" />
+                      </audio>
+                      <audio id="ringbackAudio" loop>
+                          <source src="media/ringback.ogg" type="audio/ogg" />
+                          <source src="media/ringback.mp3" type="audio/mpeg" />
+                      </audio>
+                      <audio id="callendAudio">
+                          <source src="media/callend.ogg" type="audio/ogg" />
+                          <source src="media/callend.mp3" type="audio/mpeg" />
+                      </audio>
+                      <audio id="busyAudio">
+                          <source src="media/busy.ogg" type="audio/ogg" />
+                          <source src="media/busy.mp3" type="audio/mpeg" />
+                      </audio>
+                  </div>
+                </div>
+              </nav>
+          </div>
+      </div>
+
+      <script>
+          $("a").click(
+            function(){
+              $("a").css("background-color","");
+              $(this).css("background-color","#0059b3");
+            }
+          );
+      </script>
+
+      <div class="page" ng-hide="unsupportedBrowser" ng-view></div>
+
+      <div class="page" ng-show="unsupportedBrowser">
+          <div id="unsupportedBrowser" ng-show="unsupportedBrowser">
+              Sorry, your browser is not supported. <br/>
+                  Reason: {{ unsupportedBrowser.reason }}
+
+              <br/><br/>
+              Your browser: <br/>
+              {{ unsupportedBrowser.browser }}
+          </div>
+      </div>
+
+      <div id="footer" ng-hide="location.indexOf('/room') === 0">
+          <div id="footerContent">
+              &copy; 2014, 2015 OpenMarket Ltd
+          </div>
+      </div>
+</body>
+</html>

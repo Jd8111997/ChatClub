@@ -1,0 +1,49 @@
+<div ng-controller="LoginController" class="login">
+    <div id="wrapper" class="loginWrapper" >
+
+        <a href ng-click="goToPage('/')"><img src="img/chatclub.png" width="350" height="200" alt="[matrix]" style="padding: 50px;"/></a>
+
+        <br/>
+
+        <form id="loginForm" novalidate>
+            <!-- Login with an registered user -->
+            <div>
+                Sign in with:<br/>
+
+
+                <div ng-repeat="type in login_types">
+                	<input type="radio" ng-model="$parent.login_type" value="{{ type }}" id="radio_{{ type }}"/>
+                	<label for="radio_{{ type }}">{{ login_type_label[type] }}</label>
+                </div>
+
+                <div style="text-align: center">
+                    <br/>
+                    <input id="user_id" size="32" type="text" ng-focus="true" ng-model="account.user_id" placeholder="{{ login_type_label[login_type] }}"/>
+                    <br/>
+                    <input id="password" size="32" type="password" ng-model="account.password" placeholder="Password" style="margin-top:20px;"/>
+                    <br/><br/>
+                    <button class="btn btn-primary btn-lg active" style="width:150px;" id="login" ng-click="login()" ng-disabled="!account.user_id || !account.password || !account.homeserver"><b>Login</b></button>
+                    <br/><br/>
+                </div>
+
+                <div class="feedback">{{ feedback }} {{ login_error_msg }}</div>
+
+                <div id="serverConfig">
+                    <label for="homeserver">Home Server:</label>
+                    <input id="homeserver" size="32" type="text" ng-model="account.homeserver" placeholder="URL (e.g. https://matrix.org)"/>
+                    <div class="smallPrint">Your home server stores all your conversation and account data.</div>
+                    <label for="identityServer">Identity_Server:</label>
+                    <input id="identityServer" size="32" type="text" ng-model="account.identityServer" placeholder="URL (e.g. https://matrix.org)"/>
+                    <div class="smallPrint">Matrix provides identity servers to track which emails etc. belong to which Matrix IDs.<br/>
+                        Only https://matrix.org currently exists.</div>
+                    <br/>
+                    <br/>
+                    <a href="#/register" style="padding-right: 0em;color:blue;"><b>Create account</b></a><br />
+                    <a href="#/reset-password" style="color:blue;"><b>Forgotten password?</b></a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    </div>
+</div>

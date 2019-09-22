@@ -1,0 +1,23 @@
+Testing is done using Karma and Jasmine 2.x
+
+
+UNIT TESTING
+============
+
+Requires the following:
+ - npm/nodejs
+ - phantomjs
+
+Requires the following node packages:
+ - npm install jasmine
+ - npm install karma
+ - npm install karma-jasmine
+ - npm install karma-phantomjs-launcher
+ - npm install karma-junit-reporter
+ - npm install karma-coverage
+
+Make sure you're in this directory so it can find the config file and run:
+  karma start
+
+You should see all the tests pass.
+

@@ -1,0 +1,143 @@
+<div ng-controller="RegisterController" class="register">
+
+    <div id="wrapper" class="loginWrapper">
+
+        <a href ng-click="goToPage('/')"><img src="img/logo.png" width="240" height="102" alt="[matrix]"
+                                              style="padding: 50px"/></a>
+        <br/>
+
+        <form id="loginForm" novalidate>
+            <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+            <div ng-show="stage == 'initial'">
+                Create account:<br/>
+
+                <div style="text-align: center">
+                    <br/>
+                    <input id="email" size="32" type="text" ng-focus="true" ng-model="account.email"
+                           placeholder="Email address (optional)"/><br/>
+                    <input ng-model="account.bind_email" type="checkbox"/>
+                    <div id="bind_email_label">Use this account when people search for my email address on Matrix</div>
+                    <br/>
+                    <input id="desired_user_id" size="32" type="text" ng-model="account.desired_user_id"
+                           placeholder="Matrix ID (e.g. bob)" ng-class="{error: reenter_username}"/>
+                    <br/>
+                    <input id="pwd1" size="32" type="password" ng-model="account.pwd1" placeholder="Type a password"/>
+                    <br/>
+                    <input id="pwd2" size="32" type="password" ng-model="account.pwd2"
+                           placeholder="Confirm your password"/>
+                    <br/>
+                    <input id="displayName" size="32" type="text" ng-model="account.displayName"
+                           placeholder="Display name (e.g. Bob Obson)"/>
+                    <br/>
+                    <input ng-model="account.gender" type="radio" id="male" name="gender" value="Male"
+                           ng-click="getVal()"/>Male
+                    <input ng-model="account.gender" type="radio" id="female" name="gender" value="Female"
+                           ng-click="getVal()"/>Female
+                    <br/>
+                    <input type="text"
+                           ng-model="account.dob"
+                           placeholder="DD/MM/YYYY"
+                           onkeyup="
+                            var v = this.value;
+                            if (v.match(/^\d{2}$/) !== null) {
+                                this.value = v + '/';
+                            } else if (v.match(/^\d{2}\/\d{2}$/) !== null) {
+                                this.value = v + '/';
+                            }"
+                            maxlength="10"
+                           id="dob"  />
+                    <br/>
+                    <!--<input type="date" ng-model="account.dob"  id="dob"  />
+                    <br/>
+                    dob = {{account.dob | date : "dd-MM-yyyy"}}
+                    <br/>
+
+
+                    <!--dob = {{account.dob | date: "dd-MM-yyyy"}}
+                    9586425748
+                    -->
+                    <!--  dob = {{account.dob | date: "dd-MM-yyyy"}} -->
+                    <textarea id="address" ng-model="account.address" placeholder="Enter Your Address"
+                              style="margin: 0px; width: 362px; height: 50px;"></textarea>
+                    <br/>
+                    <input id="mobile_no" size="32" type="tel" ng-model="account.mobile_no"
+                           placeholder="Enter your Mobile Number "/>
+                    <!--minlength="10" maxlength="14" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required/>-->
+                    <br/>
+                    <input ng-model="account.place" type="radio" id="state" name="place" value="state"
+                           ng-click="getVal()"/>State
+                    <input ng-model="account.place" type="radio" id="central" name="place" value="central"
+                           ng-click="getVal()"/>Central
+                    <br/>
+                    <select ng-model="account.department"
+                                        id="department"
+                                        ng-focus="true">
+                        <option>--------Select Dept---------------</option>
+                        <option>----------D1----------------------</option>
+                        <option>----------D2----------------------</option>
+                    </select>
+                    <br/>
+                    <select ng-model="account.branch"
+                                        id="branch"
+                                        ng-focus="true">
+                        <option>--------Select brch---------------</option>
+                        <option>----------B1----------------------</option>
+                        <option>----------B2----------------------</option>
+                    </select>
+                    <!--<select ng-model="account.department"
+                                        ng-options="dept.values.name for dept in deptArray"
+                                        ng-change="showDepartment()"
+                                        id="department"
+                                        ng-focus="true">
+                                    <option value="">-- Select Department --</option>
+                                </select>
+                    <br/>
+                    <select ng-model="account.branch"
+                                        ng-options="br.values.name for br in brArray"
+                                        ng-change="showBranch()"
+                                        id="branch"
+                                        ng-focus="true">
+                                    <option value="">-- Select Branch --</option>
+                                </select>-->
+                    <br/>
+                    <button ng-show="!registering" ng-click="register()"
+                            ng-disabled="!account.desired_user_id ||!account.mobile_no|| !account.homeserver || !account.pwd1 || !account.pwd2 || account.pwd1 !== account.pwd2">
+                        Sign up
+                    </button>
+                    <div class="spinner" us-spinner ng-show="registering"></div>
+
+                    <br/><br/>
+                </div>
+
+                <div class="feedback">{{ feedback }} {{ login_error_msg }}</div>
+
+                <div id="serverConfig" ng-show="!wait_3pid_code">
+                    <label for="homeserver">Home Server:</label>
+                    <input id="homeserver" size="32" type="text" ng-model="account.homeserver"
+                           placeholder="URL (e.g. https://matrix.org)"/>
+                    <div class="smallPrint">Your home server stores all your conversation and account data.</div>
+                    <label for="identityServer">Identity Server:</label>
+                    <input id="identityServer" size="32" type="text" ng-model="account.identityServer"
+                           placeholder="URL (e.g. https://matrix.org)"/>
+                    <div class="smallPrint">Matrix provides identity servers to track which emails etc. belong to which
+                        Matrix IDs.<br/>
+                        Only https://matrix.org currently exists.
+                    </div>
+                </div>
+            </div>
+            <div ng-show="stage == 'captcha'">
+                <p>This Home Server only allows humans to create accounts.</p>
+                <p>Please verify that you're not a robot.</p>
+                <div id="regcaptcha"/>
+                <p class="feedback">{{captchaMessage}}</p>
+            </div>
+            <div ng-show="stage == 'email'">
+                <div style="text-align: center; ">
+                    <span>An email has been sent to {{ account.email }}. Once you've followed the link it contains either continue registration there or click below</span><br/>
+                    <button ng-click="verifyToken()">I've verified my address: continue</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

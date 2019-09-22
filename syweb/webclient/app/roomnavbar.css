@@ -1,0 +1,24 @@
+.roomnavbar .navbar-custom {
+    background-color: #9c9797;
+    margin-top: 50px;
+}
+
+
+.roomnavbar .navbar-custom .nav-item:hover .nav-link {
+    background-color: #0059b3;
+}
+
+.roomnavbar .navbar-custom .nav-item:active .nav-link{
+  background-color: #0059b3;
+}
+
+/* change the brand and text color */
+.roomnavbar .navbar-custom .navbar-brand,
+.roomnavbar .navbar-custom .navbar-text {
+    color: rgba(255,255,255,.8);
+}
+
+/* change the link color */
+.roomnavbar .navbar-custom .navbar-nav .nav-link {
+    color: rgba(255,255,255,.5);
+}
